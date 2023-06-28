@@ -1,12 +1,18 @@
 package com.exceptionHandlingDemo.service;
 
+import com.exceptionHandlingDemo.exception.ResourceNotFoundException;
 import com.exceptionHandlingDemo.model.Employee;
 import com.exceptionHandlingDemo.repository.EmployeeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
+@Service
 public class EmployeeServiceImpl implements EmployeeService {
     /* Created By Vinay-Kumar-HT */
 
@@ -26,14 +32,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> getAllEmployees() {
-        var employeeList = employeeRepository.findAll();
-        return employeeList;
+    public List<Employee> getAllEmployees() throws ResourceNotFoundException {
+        return employeeRepository.findAll();
     }
 
     @Override
     public Employee getEmployeeById(Long id) {
-        return null;
+        return employeeRepository.getReferenceById(id);
     }
 
     @Override

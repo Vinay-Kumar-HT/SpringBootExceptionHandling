@@ -1,16 +1,17 @@
 package com.exceptionHandlingDemo.service;
 
+import com.exceptionHandlingDemo.exception.ResourceNotFoundException;
 import com.exceptionHandlingDemo.model.Employee;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+
 public interface EmployeeService {
 
     public Employee saveEmployee(Employee employee);
 
-    public List<Employee> getAllEmployees();
+    public List<Employee> getAllEmployees() throws ResourceNotFoundException;
 
     public Employee getEmployeeById(Long id);
 

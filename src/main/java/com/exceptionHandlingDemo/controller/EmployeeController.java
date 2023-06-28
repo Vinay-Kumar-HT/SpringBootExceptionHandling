@@ -1,16 +1,21 @@
 package com.exceptionHandlingDemo.controller;
 
 
+import com.exceptionHandlingDemo.exception.ResourceNotFoundException;
 import com.exceptionHandlingDemo.model.Employee;
 import com.exceptionHandlingDemo.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/employees")
+@RequestMapping("/v1/employee")
 public class EmployeeController {
     /* Created By Vinay-Kumar-HT */
 
@@ -25,24 +30,20 @@ public class EmployeeController {
         return employeeService.saveEmployee(employee);
     }
 
-    @GetMapping("/employee1")
-    public List<Employee> getAllEmployees() {
+    @GetMapping
+    public ResponseEntity getAllEmployees() throws ResourceNotFoundException {
+        return  Optional.ofNullable(employeeService.getAllEmployees())
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException("No Employees Found !!!"));
 
-        var employeeList = Arrays.asList(
-                new Employee(1,"Testing","CS"),
-                new Employee(2,"Test 2", "IS")
-        );
-       return employeeList;
     }
 
-    @GetMapping("/employee")
-    public String getAllEmploy() {
-
-        var employeeList = Arrays.asList(
-                new Employee(1,"Testing","CS"),
-                new Employee(2,"Test 2", "IS")
-        );
-        return "Hey Vinay";
+    @GetMapping("/{id}")
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable(value = "id") Long id){
+        return Optional.ofNullable(employeeService.getEmployeeById(id))
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee Not Found!!!"));
     }
+
 
 }

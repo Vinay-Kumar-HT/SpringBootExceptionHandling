@@ -3,6 +3,8 @@ package com.exceptionHandlingDemo.model;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
@@ -11,6 +13,7 @@ public class Employee {
     /* Created By Vinay-Kumar-HT */
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long empId;
     private String name;
     private String department;
