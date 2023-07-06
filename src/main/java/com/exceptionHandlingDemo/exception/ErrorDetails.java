@@ -1,25 +1,27 @@
 package com.exceptionHandlingDemo.exception;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+
+import java.time.LocalDate;
 
 public class ErrorDetails {
     /* Created By Vinay-Kumar-HT */
-    private Date date;
+    private LocalDate date;
     private String message;
     private String details;
+    private ErrorCodeEnum errorCode;
 
-    public ErrorDetails(Date date, String message, String details) {
+    public ErrorDetails(LocalDate date, String message, String details, ErrorCodeEnum errorCode) {
         this.date = date;
         this.message = message;
         this.details = details;
+        this.errorCode = errorCode;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -37,5 +39,13 @@ public class ErrorDetails {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public ErrorCodeEnum getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(ErrorCodeEnum errorCode) {
+        this.errorCode = errorCode;
     }
 }

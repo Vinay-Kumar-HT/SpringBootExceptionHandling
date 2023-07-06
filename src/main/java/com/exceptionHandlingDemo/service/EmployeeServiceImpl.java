@@ -1,12 +1,11 @@
 package com.exceptionHandlingDemo.service;
 
+import com.exceptionHandlingDemo.exception.EmailAlreadyExistsException;
 import com.exceptionHandlingDemo.exception.ResourceNotFoundException;
 import com.exceptionHandlingDemo.model.Employee;
 import com.exceptionHandlingDemo.repository.EmployeeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,30 +24,71 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee saveEmployee(Employee employee) {
-        var response = employeeRepository.save(employee);
-        logger.info("Employee Saved Successfully " + response);
-        return employee;
+    public Employee saveEmployee(Employee employee) throws EmailAlreadyExistsException{
+        Optional.ofNullable(employeeRepository.findByEmail(employee.getEmail())).ifPresent(
+                (savedEmployee) -> {
+                    throw new EmailAlreadyExistsException(
+                            String.format(" Employee with email %s already exist", savedEmployee.getEmail()));
+                }
+        );
+
+        var savedEmployee = employeeRepository.save(employee);
+        logger.info("Employee Saved Successfully " + savedEmployee);
+        return savedEmployee;
     }
 
     @Override
     public List<Employee> getAllEmployees() throws ResourceNotFoundException {
-        return employeeRepository.findAll();
+        var employees = Optional.of(employeeRepository.findAll()).orElseThrow(
+                () -> {
+                    throw new ResourceNotFoundException("No Employees Found !!!");
+                }
+        );
+
+        return employees;
+
     }
 
     @Override
-    public Employee getEmployeeById(Long id) {
-        return employeeRepository.getReferenceById(id);
+    public Employee getEmployeeById(Long id) throws ResourceNotFoundException {
+
+        return employeeRepository.findById(id).orElseThrow(
+                () -> {
+                    throw new ResourceNotFoundException("Employee", "Id", String.valueOf(id));
+                }
+        );
+
     }
 
     @Override
     public Employee updateEmployee(Long id, Employee employee) {
-        return null;
+        var updateEmployee = employeeRepository.findById(id).orElseThrow(
+                () -> {
+                    throw new ResourceNotFoundException("Employee", "Id", String.valueOf(id));
+                }
+        );
+
+        updateEmployee.setName(employee.getName());
+        updateEmployee.setEmail(employee.getEmail());
+        updateEmployee.setDepartment(employee.getDepartment());
+
+        var responseEmployee = Optional.ofNullable(employeeRepository.save(updateEmployee));
+        if(responseEmployee.isPresent()) {
+            logger.info("Employee updated successfully !!!");
+        }
+        return responseEmployee.get();
     }
 
     @Override
-    public Employee removeEmployee(Long id) {
-        return null;
+    public void removeEmployee(Long id) {
+        var employee = employeeRepository.findById(id).orElseThrow(
+                () -> {
+                    throw new ResourceNotFoundException("Employee", "Id", String.valueOf(id));
+                }
+        );
+        logger.info("Employee removed successfully !!!");
+
+        employeeRepository.deleteById(id);
     }
 
 

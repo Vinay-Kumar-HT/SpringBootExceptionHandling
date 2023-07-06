@@ -1,18 +1,13 @@
 package com.exceptionHandlingDemo.controller;
 
 
-import com.exceptionHandlingDemo.exception.ResourceNotFoundException;
 import com.exceptionHandlingDemo.model.Employee;
 import com.exceptionHandlingDemo.service.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/employee")
@@ -26,23 +21,34 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public Employee saveEmployees(@RequestBody Employee employee) {
-        return employeeService.saveEmployee(employee);
+    public ResponseEntity saveEmployees(@RequestBody @Validated Employee employee) {
+        var savedEmployee = employeeService.saveEmployee(employee);
+        return new ResponseEntity(savedEmployee, HttpStatus.CREATED);
+    }
+
+    @PutMapping
+    public ResponseEntity updateEmployees(@RequestParam Long id, @RequestBody Employee employee) {
+        var updatedEmployee = employeeService.updateEmployee(id, employee);
+        return new ResponseEntity(updatedEmployee, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity getAllEmployees() throws ResourceNotFoundException {
-        return  Optional.ofNullable(employeeService.getAllEmployees())
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("No Employees Found !!!"));
-
+    public ResponseEntity getAllEmployees() {
+        var employeeList = employeeService.getAllEmployees();
+        return new ResponseEntity(employeeList, HttpStatus.OK);
     }
 
+
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable(value = "id") Long id){
-        return Optional.ofNullable(employeeService.getEmployeeById(id))
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee Not Found!!!"));
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable(value = "id") Long id) {
+        var employee = employeeService.getEmployeeById(id);
+        return new ResponseEntity<>(employee, HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity removeEmployee(@RequestParam Long id){
+        employeeService.removeEmployee(id);
+        return new ResponseEntity(String.format("Employee Deleted with id %s : ",id), HttpStatus.OK);
     }
 
 

@@ -1,30 +1,33 @@
 package com.exceptionHandlingDemo.model;
 
-import org.springframework.stereotype.Component;
+import org.springframework.lang.Nullable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
-@Component
+@Table
 public class Employee {
-    /* Created By Vinay-Kumar-HT */
+/* Created By Vinay-Kumar-HT */
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long empId;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
+    private String email;
+    @Column(nullable = false)
     private String department;
 
-    public Employee(long empId, String name, String department) {
+    public Employee(long empId, String name, String email, String department) {
         this.empId = empId;
         this.name = name;
+        this.email = email;
         this.department = department;
     }
 
-    public Employee(){}
+    public Employee() {
+    }
 
     public long getEmpId() {
         return empId;
@@ -42,6 +45,14 @@ public class Employee {
         this.name = name;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getDepartment() {
         return department;
     }
@@ -55,6 +66,7 @@ public class Employee {
         return "Employee{" +
                 "empId=" + empId +
                 ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
                 ", department='" + department + '\'' +
                 '}';
     }
