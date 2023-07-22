@@ -1,7 +1,5 @@
 package com.exceptionHandlingDemo.model;
 
-import org.springframework.lang.Nullable;
-
 import javax.persistence.*;
 
 @Entity
